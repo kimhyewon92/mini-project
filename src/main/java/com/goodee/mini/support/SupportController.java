@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SupportController {
 	
+	@Value("${toss.secret.key}")
+	private String gck;
+	
 	@Autowired
 	private SupportService supportService;
 	
@@ -45,8 +50,6 @@ public class SupportController {
 	@GetMapping("/toss/success")
     public String success(@RequestParam String paymentKey, @RequestParam String orderId, @RequestParam Long amount, Model model, HttpSession session) throws Exception {
 		MemberVO memberVO = (MemberVO)session.getAttribute("member");
-		
-		System.out.println("paymentKey from Toss: " + paymentKey);
 		
 		SupportVO supportVO = new SupportVO();
 		supportVO.setPaymentKey(paymentKey);
@@ -66,7 +69,7 @@ public class SupportController {
 	    String orderId = (String) requestData.get("orderId");
 	    Long amount = Long.valueOf(requestData.get("amount").toString());
 
-	    String secretKey = "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R"; 
+	    String secretKey = gck; 
 	    String url = "https://api.tosspayments.com/v1/payments/confirm";
 
 	    // 1. Base64 인코딩
@@ -85,8 +88,13 @@ public class SupportController {
 
 	    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-	    // 3. 요청
+	    // 3. 요청 및 인코딩 설정
 	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.getMessageConverters()
+	        .removeIf(converter -> converter instanceof StringHttpMessageConverter);
+	    restTemplate.getMessageConverters()
+	        .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+	    
 	    ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 
 	    // 4. 응답 파싱
@@ -95,8 +103,8 @@ public class SupportController {
 
 	    String status = jsonNode.get("status").asText();
 	    String method = jsonNode.get("method").asText();
-	    String approvedAt = jsonNode.get("approvedAt").asText();
-
+	    System.out.println("===========method ============ : " + method);
+	    
 	    // 5. DB 업데이트
 	    SupportVO supportVO = new SupportVO();
 	    supportVO.setOrderId(orderId);
@@ -112,7 +120,6 @@ public class SupportController {
 	    result.put("orderId", orderId);
 	    result.put("amount", amount);
 	    result.put("method", method);
-	    result.put("approvedAt", approvedAt);
 
 	    return ResponseEntity.ok(result);
 	}
