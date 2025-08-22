@@ -9,5 +9,6 @@
 	<script src="/js/scripts.js"></script>
 	<!-- summernote -->
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
-
+	<script src="https://js.tosspayments.com/v2/standard"></script>
+	
 	

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
         <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
         <!-- jQuery -->
 		<script type="text/javascript" src="//code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Bootstrap icons-->

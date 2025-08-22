@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.goodee.mini.support.SupportDao">
+
+	<update id="updatePayRequest" parameterType="SupportVO">
+		UPDATE SUPPORT
+		SET payment_method = #{paymentMethod}, status = #{status}
+		WHERE payment_key = #{paymentKey}
+	</update>
+
+	<insert id="savePayRequest" parameterType="SupportVO">
+		INSERT INTO SUPPORT (mem_no, amount, order_id, payment_key, status)
+		VALUES (#{memNo}, #{amount}, #{orderId}, #{paymentKey}, #{status})
+	</insert>
+
+	<select id="findByMemNo" parameterType="long" resultType="SupportVO">
+        SELECT support_no, mem_no, amount, order_id, payment_key,
+               payment_method, status, created_at, updated_at
+        FROM support
+        WHERE mem_no = #{memNo}
+        ORDER BY created_at DESC
+    </select>
+    
+
+</mapper>

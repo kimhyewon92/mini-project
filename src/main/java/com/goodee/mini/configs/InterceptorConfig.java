@@ -18,7 +18,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
 				"/notice/delete", 
 				"/pet/add", 
 				"/pet/update", 
-				"/pet/delete");
+				"/pet/delete",
+				"/support/*");
 	}
 	
 }
